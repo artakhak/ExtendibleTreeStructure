@@ -1,0 +1,121 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+		<Nullable>enable</Nullable>
+
+		<IsPackable>false</IsPackable>
+		<EnableDefaultItems>false</EnableDefaultItems>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Include="CommandIds.cs" />
+	  <Compile Include="ErrorTests\CircularReferencesErrorTests.cs" />
+	  <Compile Include="ErrorTests\ErrorTests.cs" />
+	  <Compile Include="MenuIds.cs" />
+	  <Compile Include="MenuItems\ICopyMenuObject.cs" />
+	  <Compile Include="MenuItems\IMenuBarItemData.cs" />
+	  <Compile Include="MenuItems\MenuDataObjectWrapper.cs" />
+	  <Compile Include="MenuItems\IMenuItemCollection.cs" />
+	  <Compile Include="MenuItems\IMenuItemData.cs" />
+	  <Compile Include="MenuItems\IMenuObject.cs" />
+	  <Compile Include="MenuItems\INonCopyMenuObject.cs" />
+	  <Compile Include="MenuItems\MenuBarData.cs" />
+	  <Compile Include="MenuItems\MenuItemDataBase.cs" />
+	  <Compile Include="MenuItems\MenuObjectWithNoCloneWithNewParent.cs" />
+	  <Compile Include="SuccessfulCacheBuildTests\SuccessfulCacheBuildTests.cs" />
+	  <Compile Include="TestDataStoresCache.cs" />
+	  <Compile Include="TestHelpers.cs" />
+	  <Compile Include="Validation\ExpectedDataStoresCache.cs" />
+	  <Compile Include="Validation\ExpectedMenuObjectWrapper.cs" />
+	  <Compile Include="Validation\ExpectedMenuDataStoreItemsCache.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\ExtendibleTreeStructure.licenseheader" Link="ExtendibleTreeStructure.licenseheader" />
+	  <None Include="ErrorTests\TestFiles\TransitiveChildAndCopyCircularReferences.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\CircularCopyItemReferences.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\ChildParentReferencingEachOther2.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\ChildParentReferencingEachOther1.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\CustomErrors.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\CopyDataStoreItemReferencesItself.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\DuplicateDataStoreItemIdsInSameDataStore.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\CanCopyOnlyItemsInDataStore.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\ParentIdReferencesItself.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\InvalidCopiedDataStoreItem.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\DuplicateDataStoreIds.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\InvalidTopLevelDataStoreItems.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\InvalidChildDataStoreItems.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="ErrorTests\TestFiles\InvalidParentIds.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="SuccessfulCacheBuildTests\TestFiles\CopyDataStoreItemMultipleTimesInDataStore.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="SuccessfulCacheBuildTests\TestFiles\IgnoreSomeDataStoreItems.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="SuccessfulCacheBuildTests\TestFiles\SortingDataStoreItems.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="SuccessfulCacheBuildTests\TestFiles\DataStoresReferencingEachOther.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="SuccessfulCacheBuildTests\TestFiles\CopyDataStoreItem.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="SuccessfulCacheBuildTests\TestFiles\CopyingCopyOfDataStoreItem.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="SuccessfulCacheBuildTests\TestFiles\SuccessfulCacheBuildTests.xml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Include="MenuDataStoresSchema.xsd">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	    <SubType>Designer</SubType>
+	  </None>
+	  <None Include="ExtendibleTreeStructure.Tests.log4net.config">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="log4net" Version="2.0.12" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
+		<PackageReference Include="NUnit" Version="3.13.2" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
+		<PackageReference Include="coverlet.collector" Version="3.1.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ExtendibleTreeStructure\ExtendibleTreeStructure.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+		<menuItemCollection id="RecentObjectsCollection" usesMenuSeparator="true" />
+
+		<menuItem commandId="RecentFiles" parentId="RecentObjectsCollection" />
+		<menuItem commandId="RecentlyChangedFiles" parentId="RecentObjectsCollection" />
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<menuBarItem commandId="ViewMenuBarItem"/>
+
+		<!--1. Copy RecentObjectsCollection item from SharedMenuObjects (along with its children) data store as a child 
+		of ViewMenuBarItem in this store 
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" referencedMenuObjectId="RecentObjectsCollection"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.ViewMenuBarItem" />
+
+		<!--2. Add new children to copied RecentObjectsCollection-->
+		<menuItem commandId="RecentChanges" parentId="RecentObjectsCollection" />
+		<!--3. Add RecentSubmissions as a child to RecentFiles that is a child of copied RecentObjectsCollection-->
+		<menuItem commandId="RecentSubmissions" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles" />
+	</menuDataStore>
+</menuDataStores>

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+		<menuItemCollection id="RecentObjectsGroup"/>
+		<menuItem commandId="RecentFiles" parentId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"/>
+		<menuItem commandId="RecentlyChangedFiles" parentId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"/>
+		<menuItem commandId="RecentLocations" parentId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"/>
+		
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<menuItem commandId="ToolsSubmenuItem"/>
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.ToolsSubmenuItem"/>
+
+		<!--We can add child RecentChanges to a child RecentFiles of of copied data store item RecentObjectsGroup,
+		even though it is not explicitly defined in this data store (e.g., RecentFiles is not in data store SharedMenuObjects2).
+		However, we cannot copy RecentFiles in this data store (SharedMenuObjects2), since it is not explicitly defined in this data store.
+		Only items explicitly defined in data store can be copied within the same data store, or to a different data store.
+		-->
+		<menuItem commandId="RecentChanges" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles"/>
+
+		<!--copyMenuObject for RecentFiles is defined in SharedMenuObjects, so we can copy it in this or other data stores -->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles"/>
+		
+		<menuItem commandId="RecentSubmissions" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentlyChangedFiles"/>
+
+		<!--copyMenuObject RecentlyChangedFilesCopy below will result in error logged, since it references RecentlyChangedFiles in SharedMenuObjects2
+		that is a child of RecentObjectsGroup that is copied to SharedMenuObjects2 from SharedMenuObjects, 
+		however RecentlyChangedFiles is not defined in data store SharedMenuObjects2-->
+		<copyMenuObject id="RecentlyChangedFilesCopy" 
+		                referencedMenuDataStoreId="SharedMenuObjects2"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.RecentlyChangedFiles"/>
+		
+	</menuDataStore>
+	<menuDataStore id="NoFileSelectedMenuObjects">
+		<!--copyMenuObject below will result in error logged, since it references RecentLocations in SharedMenuObjects2
+		that is a child of RecentObjectsGroup that is copied to SharedMenuObjects2 from SharedMenuObjects, 
+		and RecentLocations is not defined in data store SharedMenuObjects2-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects2"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.RecentLocations"/>
+
+		<!--Example of copying copied RecentObjectsGroup from SharedMenuObjects2-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects2"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"/>
+		
+	</menuDataStore>
+</menuDataStores>

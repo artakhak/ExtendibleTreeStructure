@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+		<menuItem commandId="Projects"/>
+		<menuItem commandId="Errors" parentId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+
+		<menuItem commandId="Projects"/>
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+	</menuDataStore>
+</menuDataStores>

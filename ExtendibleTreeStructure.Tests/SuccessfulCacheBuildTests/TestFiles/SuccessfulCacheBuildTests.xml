@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd"
+	>
+	<menuDataStore id="SharedMenuObjects">
+		<menuItemCollection id="RecentObjectsGroup" usesMenuSeparator="true" />
+		<menuItemCollection id="RecentObjectsCollection" parentId="RecentObjectsGroup"  />
+
+		<menuItem commandId="RecentFiles" parentId="RecentObjectsCollection" priority="4"/>
+		<menuItem commandId="RecentlyChangedFiles" parentId="RecentObjectsCollection" priority="3"/>
+		<menuItem commandId="RecentLocations" parentId="RecentObjectsCollection" priority="2" />
+		<menuItem commandId="RecentChanges" parentId="RecentObjectsCollection" priority="1"/>
+
+		<menuItemCollection id="SharedToolsCollection"/>
+		<menuItem commandId="Projects" parentId="SharedToolsCollection"/>
+		<menuItem commandId="Errors" parentId="SharedToolsCollection"/>
+
+		<menuItem commandId="SaveFile"/>
+
+		<menuItemCollection id="CommonSearchMenuCollection" usesMenuSeparator="true" />
+		<menuItem commandId="FindText" parentId="CommonSearchMenuCollection"/>
+		<menuItem commandId="FindFile" parentId="CommonSearchMenuCollection"/>
+	</menuDataStore>
+
+	<menuDataStore id="NoFileSelectedMenuObjects">
+		<menuBar id="NoFileSelectedDefaultMenuBar" />
+
+		<menuBarItem commandId="ViewMenuBarItem" parentMenuBarId="NoFileSelectedDefaultMenuBar"/>
+		
+		<menuItem commandId="ToolsSubmenuItem" parentId="ExtendibleTreeStructure.Tests.CommandIds.ViewMenuBarItem"/>
+		<menuItem commandId="Git" parentId="ExtendibleTreeStructure.Tests.CommandIds.ToolsSubmenuItem"/>
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="SharedToolsCollection"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.ToolsSubmenuItem"/>
+		
+		<menuItem commandId="AppearanceSubmenuItem" parentId="ExtendibleTreeStructure.Tests.CommandIds.ViewMenuBarItem" />
+
+		<menuItemCollection id="PresentationMode" parentId="ExtendibleTreeStructure.Tests.CommandIds.AppearanceSubmenuItem" usesMenuSeparator="true"/>
+		<menuItem commandId="EnterPresentationMode" parentId="PresentationMode" />
+		<menuItem commandId="EnterFullScreenMode" parentId="PresentationMode" />
+
+		<menuItemCollection id="VisibleCommandBars" parentId="ExtendibleTreeStructure.Tests.CommandIds.AppearanceSubmenuItem" usesMenuSeparator="true"/>
+
+		<menuItem commandId="NavigationBars" parentId="VisibleCommandBar"/>
+		<menuItem commandId="UserProfileCommands" parentId="VisibleCommandBars"/>
+		
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" referencedMenuObjectId="RecentObjectsGroup" 
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.ViewMenuBarItem"/>
+
+		<menuBarItem commandId="FileMenuBarItem" parentMenuBarId="NoFileSelectedDefaultMenuBar"/>
+
+		<menuItemCollection id="SaveFileCollection" parentId="ExtendibleTreeStructure.Tests.CommandIds.FileMenuBarItem" usesMenuSeparator="true"/>
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.SaveFile" parentId="SaveFileCollection"/>
+		<menuBarItem commandId="SaveFileAs" parentMenuBarId="SaveFileCollection"/>
+	</menuDataStore>
+
+	<menuDataStore id="TextFileMenuObjects">
+
+		<copyMenuObject id="TextFileMenuObjectsMenuBar" referencedMenuDataStoreId="NoFileSelectedMenuObjects" 
+		                referencedMenuObjectId="NoFileSelectedDefaultMenuBar"/>
+		<menuBarItem commandId="EncodingMenuBarItem" parentMenuBarId="TextFileMenuObjectsMenuBar"/>
+		<menuItem commandId="EncodingUtf8"/>
+
+		<menuItemCollection id="TextFileSaveFileMenuItemsCollection" parentId="SaveFileCollection" usesMenuSeparator="false"/>
+		<menuItem commandId="SaveToCloud" parentId="TextFileSaveFileMenuItemsCollection"/>
+
+		<menuBarItem commandId="EditMenuBarItem" parentMenuBarId="TextFileMenuObjectsMenuBar"/>
+	</menuDataStore>
+
+	<menuDataStore id="CSharpFileMenuObjects">
+		<copyMenuObject id="CSharpFileMenuObjectsMenuBar" referencedMenuDataStoreId="TextFileMenuObjects"
+		                referencedMenuObjectId="TextFileMenuObjectsMenuBar"/>
+
+		<menuBarItem commandId="BuildMenuBarItem" parentMenuBarId="CSharpFileMenuObjectsMenuBar"/>
+
+		<menuItem commandId="BuildSolution" parentId="ExtendibleTreeStructure.Tests.CommandIds.BuildMenuBarItem"/>
+		<menuItem commandId="BuildProject" parentId="ExtendibleTreeStructure.Tests.CommandIds.BuildMenuBarItem"/>
+
+		<!--Copy menu objects in CommonSearchMenuCollection in data store SharedMenuObjects 
+		into EditMenuBarItem that have been copied from menu store TextFileMenuObjects
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="CommonSearchMenuCollection" parentId="ExtendibleTreeStructure.Tests.CommandIds.EditMenuBarItem"/>
+
+	</menuDataStore>
+
+</menuDataStores>

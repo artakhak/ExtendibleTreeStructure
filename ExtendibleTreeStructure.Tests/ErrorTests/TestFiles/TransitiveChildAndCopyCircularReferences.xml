@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<!--ToolsSubmenuItem in SharedMenuObjects goes to child RecentFiles
+	   RecentFiles goes to child Projects in SharedMenuObjects
+	   Projects in SharedMenuObjects goes to copied menu object Projects in SharedMenuObjects2
+	   Projects in SharedMenuObjects2 goes to child ToolsSubmenuItem in SharedMenuObjects2
+	   ToolsSubmenuItem in SharedMenuObjects2 goes to copied menu object ToolsSubmenuItem in SharedMenuObjects
+	   ToolsSubmenuItem in SharedMenuObjects goes to child RecentFiles, which is the menu object we started with
+	   -->
+	<menuDataStore id="SharedMenuObjects">
+
+		<menuItem commandId="ToolsSubmenuItem" />
+
+		<menuItem commandId="RecentSubmissions" parentId="ExtendibleTreeStructure.Tests.CommandIds.ToolsSubmenuItem" />
+		
+		<menuItem commandId="RecentFiles" parentId="ExtendibleTreeStructure.Tests.CommandIds.ToolsSubmenuItem" />
+
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects2" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.Projects"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles"/>
+		
+		<menuItem commandId="RecentChanges" parentId="ExtendibleTreeStructure.Tests.CommandIds.ToolsSubmenuItem" />
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<menuItem commandId="Projects"/>
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.ToolsSubmenuItem" 
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+	</menuDataStore>
+</menuDataStores>

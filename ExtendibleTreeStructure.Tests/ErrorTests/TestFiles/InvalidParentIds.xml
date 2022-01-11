@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+		<menuItem commandId="RecentFiles"/>
+		<menuItem commandId="RecentLocations" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles"/>
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<menuBar id="VisibleCommandBars"/>
+		<!--RecentFiles is copied from SharedMenuObjects, however it will not be added as a child to VisibleCommandBars, 
+		since it cannot be child of menu bar VisibleCommandBars
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles"
+		                parentId="VisibleCommandBars"/>
+
+		<!--EnterPresentationMode does not exist in this data store and is not copied over from other data stores,
+			therefore an error will be logged for data tore item with commandId=Errors. It still will be in cache (without parent data) 
+		-->
+		<menuItem commandId="Errors" parentId="ExtendibleTreeStructure.Tests.CommandIds.EnterPresentationMode"/>
+
+		<!--RecentLocations is copied from SharedMenuObjects. However, since RecentFiles is not added as a child to
+		VisibleCommandBars, Projects will not be under VisibleCommandBars.
+		Therefore an error will be logged for data tore item with commandId=Projects. Projects will still be in cache (without parent data)	
+		-->
+		<menuItem commandId="Projects" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentLocations"/>
+	</menuDataStore>
+
+</menuDataStores>

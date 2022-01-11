@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+		<menuBarItem commandId="ViewMenuBarItem"/>
+		<menuItemCollection id="RecentObjectsGroup" parentId="ExtendibleTreeStructure.Tests.CommandIds.ViewMenuBarItem"/>
+		<menuItem commandId="RecentlyChangedFiles" parentId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"/>
+		<menuItem commandId="RecentLocations" parentId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"/>
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+
+		<!--Copy RecentObjectsGroup from SharedMenuObjects with the same id (Id value will be the same as the Id in copied 
+		data store item in SharedMenuObjects, since we do not explicitly set the Id) in this data store as a top level data store 
+		item (no parent Id specified).
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"/>
+
+		<!--Add RecentFiles as a child to RecentObjectsGroup copied from SharedMenuObjects.
+			Note, RecentFiles, along with its child Errors will appear under all copies of RecentObjectsGroup.
+		-->
+		<menuItem commandId="RecentFiles" parentId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"/>
+		<menuItem commandId="Errors" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles"/>
+
+		<menuBarItem commandId="FileMenuBarItem"/>
+		
+		<!---Copy RecentObjectsGroup in SharedMenuObjects2 data store (which is a copy of RecentObjectsGroup in SharedMenuObjects2 with new child RecentFiles
+		added in this data store) and add it as a child of FileMenuBarItem in this data store twice (once with new Id=RecentObjectsGroupCopy1,
+		and another time with new Id=RecentObjectsGroupCopy2).
+		Note, since the ids of data store items specified in data store should be unique, we need to change the id oc copied object
+		if we copy the data store item more than once. However, we need to worry for Id being unique only for data store items specified in 
+		copyMenuObject, and not of children of copied dat store items. For example RecentObjectsGroup has children with ids RecentlyChangedFiles
+		and RecentLocations, which are copied multiple times.
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects2"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"
+						id="RecentObjectsGroupCopy1"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.FileMenuBarItem"/>
+		
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects2"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"
+		                id="RecentObjectsGroupCopy2"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.FileMenuBarItem"/>
+
+		<menuBarItem commandId="BuildMenuBarItem"/>
+
+		<!---Make another copy of RecentObjectsGroup in SharedMenuObjects2 data store (which is a copy of RecentObjectsGroup in 
+		SharedMenuObjects2 with new child RecentFiles
+		added in this data store) and add it as a child of BuildMenuBarItem in this data store with new Id=RecentObjectsGroupCopy3.
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects2"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.MenuIds.RecentObjectsGroup"
+		                id="RecentObjectsGroupCopy3"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.BuildMenuBarItem"/>
+
+		<!--Add RecentSubmissions as a child of RecentLocations.
+		Note, RecentLocations is not defined in this data store, but is a child of RecentObjectsGroup in SharedMenuObjects data store.
+		Since RecentObjectsGroup is copied to this data store multiple times (as top level data store item, a well as a child of  
+		FileMenuBarItem and BuildMenuBarItem), the children (including RecentSubmissions) is copied multiple times too.
+		As a result, RecentSubmissions will be added as a child under all copies of RecentLocations in this data store).		
+		-->
+		<menuItem commandId="RecentSubmissions" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentLocations"/>
+	</menuDataStore>
+</menuDataStores>

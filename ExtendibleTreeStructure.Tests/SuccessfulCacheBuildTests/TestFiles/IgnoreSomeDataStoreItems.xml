@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+
+		<!--Projects is removed in SharedMenuObjects but not in SharedMenuObjects2
+		based on convertDataStoreItemWrapper delegate parameter passed to DataStoresCache-->
+		<menuBarItem commandId="Projects"/>
+		<menuItem commandId="Git" parentId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+		<menuItem commandId="EnterPresentationMode" parentId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+
+		<!--
+		RecentlyChangedFiles and its children will be removed in SharedMenuObjects2 but not in SharedMenuObjects.
+		-->
+		<menuBarItem commandId="RecentlyChangedFiles"/>
+		<menuItem commandId="RecentFiles" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentlyChangedFiles" />
+		
+		<menuItem commandId="RecentLocations" />
+
+		<!--SaveToCloud will be removed in SharedMenuObjects-->
+		<menuItem commandId="SaveToCloud" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentLocations" />
+		<!--EncodingUtf8 will be removed in SharedMenuObjects2-->
+		<menuItem commandId="EncodingUtf8" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentLocations" />
+		<!--FindFile will be removed in both SharedMenuObjects and SharedMenuObjects2-->
+		<menuItem commandId="FindFile" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentLocations" />
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.RecentlyChangedFiles"/>
+
+		<menuBarItem commandId="BuildMenuBarItem"/>
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.RecentLocations"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.BuildMenuBarItem"/>
+	</menuDataStore>
+	
+</menuDataStores>

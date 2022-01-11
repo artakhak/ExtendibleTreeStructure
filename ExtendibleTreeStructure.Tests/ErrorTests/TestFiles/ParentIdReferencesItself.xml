@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+		<!--
+		Errors references itself via ExtendibleTreeStructure.ICanHaveParent.ParentId therefore this data store item will 
+		be removed.
+		-->
+		<menuItem commandId="Errors" parentId="ExtendibleTreeStructure.Tests.CommandIds.Errors"/>
+	</menuDataStore>
+	<menuDataStore id="SharedMenuObjects2">
+		<menuItem commandId="Projects"/>
+
+		<!--
+		Errors in SharedMenuObjects references itself via ExtendibleTreeStructure.ICanHaveParent.ParentId therefore the copy data 
+		store item below will be removed.
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.Errors"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+	</menuDataStore>
+	
+</menuDataStores>

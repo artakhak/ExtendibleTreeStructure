@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+		<menuBar id="CSharpFileMenuObjectsMenuBar"/>
+
+		<!--Git menu item is invalid child for CSharpFileMenuObjectsMenuBar and will not be added to CSharpFileMenuObjectsMenuBar-->
+		<menuItem commandId="Git" parentId="CSharpFileMenuObjectsMenuBar"/>
+		<menuBarItem commandId="Projects" parentMenuBarId="CSharpFileMenuObjectsMenuBar"/>
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="CSharpFileMenuObjectsMenuBar"/>
+
+		<!--EnterPresentationMode menu item is invalid child for CSharpFileMenuObjectsMenuBar and will not be added to CSharpFileMenuObjectsMenuBar-->
+		<menuItem commandId="EnterPresentationMode" parentId="CSharpFileMenuObjectsMenuBar"/>
+		<menuBarItem commandId="FileMenuBarItem" parentMenuBarId="CSharpFileMenuObjectsMenuBar"/>
+
+	</menuDataStore>
+
+	<menuDataStore id="NoFileSelectedMenuObjects">
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects2"
+		                referencedMenuObjectId="CSharpFileMenuObjectsMenuBar"/>
+
+		<!--SaveFile menu item is invalid child for CSharpFileMenuObjectsMenuBar and will not be added to CSharpFileMenuObjectsMenuBar-->
+		<menuItem commandId="SaveFile" parentId="CSharpFileMenuObjectsMenuBar"/>
+		<menuBarItem commandId="BuildSolution" parentMenuBarId="CSharpFileMenuObjectsMenuBar"/>
+	</menuDataStore>
+	
+</menuDataStores>

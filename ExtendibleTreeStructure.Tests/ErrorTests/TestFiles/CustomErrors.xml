@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<menuDataStore id="SharedMenuObjects">
+		<!--Projects is determined as invalid by returning (null, loggedMessage) in ExtendibleTreeStructure.ConvertDataStoreItemWrapper()
+			Therefore, this item and its children will be removed.-->
+		<menuItem commandId="Projects"/>
+		<menuItem commandId="RecentSubmissions" parentId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+
+		<!--RecentFiles is determined as invalid by returning (null, loggedMessage) in ExtendibleTreeStructure.ConvertDataStoreItemWrapper()
+			Therefore, this item and its children will be removed.-->
+		<menuItem commandId="RecentFiles"/>
+		<menuItem commandId="RecentLocations" parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles"/>
+		
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<!--Projects is determined as invalid by returning (null, loggedMessage) in ExtendibleTreeStructure.ConvertDataStoreItemWrapper()
+			Therefore, this item will not be copied.-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+
+		<menuItem commandId="Errors"/>
+		<!--RecentFiles is determined as invalid by returning (null, loggedMessage) in ExtendibleTreeStructure.ConvertDataStoreItemWrapper()
+			Therefore, this item will not be copied under Errors.-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.RecentFiles"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.Errors"/>
+	</menuDataStore>
+</menuDataStores>

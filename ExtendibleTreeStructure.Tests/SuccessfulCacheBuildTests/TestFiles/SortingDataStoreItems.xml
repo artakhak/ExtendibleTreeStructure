@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<menuDataStores
+	xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+	xsi:noNamespaceSchemaLocation="http://oroptimizer.com/ExtendibleTreeStructure/TestsXmlSchemas/MenuDataStoresSchema.xsd">
+	<!--Default value for priority is (int.MaxValue/2)-->
+	<menuDataStore id="SharedMenuObjects">
+		<!--This will be added as the last top level item in SharedMenuObjects.-->
+		<menuItemCollection id="RecentObjectsCollection" usesMenuSeparator="true" />
+
+		<menuItem commandId="RecentFiles" parentId="RecentObjectsCollection" />
+		<menuItem commandId="RecentLocations" parentId="RecentObjectsCollection" priority="20" />
+		<menuItem commandId="RecentlyChangedFiles" parentId="RecentObjectsCollection" priority="10" />
+
+		<!--EncodingUtf8 will be copied under RecentObjectsCollection with priority set in SharedMenuObjects2-->
+		<menuItem commandId="EncodingUtf8"/>
+		<!--SaveFile will be copied under RecentObjectsCollection without changing the priority (which is null by default) in SharedMenuObjects2-->
+		<menuItem commandId="SaveFile" />
+		<!--SaveFileAs will be copied under RecentObjectsCollection with different priority in SharedMenuObjects2-->
+		<menuItem commandId="SaveFileAs" priority="15"/>
+
+		<!--Projects will have priority null, since the value is not explicitly set.
+		Therefore, this item will appear after the items with set priorities.
+		-->
+		<menuItem commandId="Projects" />
+		<!--This will be added as the first top level item in SharedMenuObjects.-->
+		<menuItem commandId="Errors" priority="10"/>
+		<menuItem commandId="BuildSolution" priority="20"/>
+
+		
+	</menuDataStore>
+
+	<menuDataStore id="SharedMenuObjects2">
+		<menuBarItem commandId="ViewMenuBarItem"/>
+
+		<!--1. Copy RecentObjectsCollection item from SharedMenuObjects (along with its children) data store as a child 
+		of ViewMenuBarItem in this store 
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" referencedMenuObjectId="RecentObjectsCollection"
+		                parentId="ExtendibleTreeStructure.Tests.CommandIds.ViewMenuBarItem" />
+
+		<!--2. Add new children to copied RecentObjectsCollection-->
+		<!--This will be added as the first child in copied RecentObjectsCollection-->
+		<menuItem commandId="RecentChanges" parentId="RecentObjectsCollection" priority="3" />
+		<!--This will be added as the last child in RecentObjectsCollection-->
+		<menuItem commandId="RecentSubmissions" parentId="RecentObjectsCollection" />
+
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.EncodingUtf8" 
+		                parentId="RecentObjectsCollection" priority="12"/>
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.SaveFile"
+		                parentId="RecentObjectsCollection"/>
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects"
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.SaveFileAs"
+		                parentId="RecentObjectsCollection" priority="4"/>
+
+		<!--if no value is specified for Priority, copied value will be used.-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.Projects"/>
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.Errors"
+		                priority="30" />
+
+		<!--The value of priority as copied from SharedMenuObjects is 20, however we change it to 5, therefore, this item
+			will be the second top level item (the first will be FileMenuBarItem wit Priority=2)
+		-->
+		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects" 
+		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.BuildSolution"
+		                priority="5"/>
+
+		<!--This will be added as the first top level item.-->
+		<menuBarItem commandId="FileMenuBarItem" priority="2"/>
+	</menuDataStore>
+</menuDataStores>
