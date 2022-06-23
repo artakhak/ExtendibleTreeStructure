@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<!--<ImplicitUsings>enable</ImplicitUsings>-->
 		<Nullable>enable</Nullable>
-		<Version>1.0.2</Version>
+		<Version>1.0.3</Version>
 		<EnableDefaultItems>false</EnableDefaultItems>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<Description>ExtendibleTreeStructure is a .NET package that allows easy configuration of tree structures that need to be copied to some other trees with new parents and children.
@@ -28,7 +28,7 @@ The git repository https://github.com/artakhak/ExtendibleTreeStructure has more 
 		<AssemblyVersion>1.0.2</AssemblyVersion>
 		<FileVersion>1.0.2</FileVersion>
 		<PackageTags>extendible tree structure extendable extensible</PackageTags>
-		<PackageReleaseNotes>Couple of typo fixes in description and readme file.</PackageReleaseNotes>
+		<PackageReleaseNotes>Moved to .NET 6.0</PackageReleaseNotes>
 		<Copyright>Copyright 2022 (c) OROptimizer. All rights reserved.</Copyright>
 		<Company>OROptimizer</Company>
 		<Authors>Artak Hakobyan</Authors>
