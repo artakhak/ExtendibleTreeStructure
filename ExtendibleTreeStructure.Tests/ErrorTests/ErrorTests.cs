@@ -173,29 +173,27 @@ namespace ExtendibleTreeStructure.Tests.ErrorTests
                 true,
                 dataStores =>
                 {
-
-                    TestDataStoresCache testDataStoresCache = new TestDataStoresCache(dataStores,
-                        (dataStoreItemWrapper, parent) =>
-                        {
-                            var dataStoreItem = dataStoreItemWrapper.DataStoreItem;
-                            if (dataStoreItemWrapper.DataStoreItem.Id == CommandIds.Git &&
-                                (dataStoreItem is not ICanHaveParent canHaveParent || canHaveParent.ParentId == null))
+                    return new TestDataStoresCache(dataStores,
+                        new TestMenuDataObjectWrapperFactory(
+                            (dataStoreId, dataStoreItem, parent) =>
                             {
-                                return (null, new LoggedMessage(MessageType.Custom,
-                                    $"[{dataStoreItem.GetDisplayValue(dataStoreItem.Id)}] with type '{dataStoreItem.GetType()}' cannot be used as top level data store item.",
-                                    dataStoreItemWrapper.DataStoreId, dataStoreItem, MessageCategory.Error));
-                            }
+                                if (dataStoreItem.Id == CommandIds.Git &&
+                                    (dataStoreItem is not ICanHaveParent canHaveParent || canHaveParent.ParentId == null))
+                                {
+                                    return (null, new LoggedMessage(MessageType.Custom,
+                                        $"[{dataStoreItem.GetDisplayValue(dataStoreItem.Id)}] with type '{dataStoreItem.GetType()}' cannot be used as top level data store item.",
+                                        dataStoreId, dataStoreItem, MessageCategory.Error));
+                                }
 
-                            return (new MenuDataObjectWrapper(dataStoreItemWrapper.DataStoreItem, dataStoreItemWrapper.DataStoreId, parent), null);
-                        });
-
-                    return testDataStoresCache;
+                                return (new MenuDataObjectWrapper(dataStoreId, dataStoreItem, parent), null);
+                            }));
                 });
 
             Assert.IsFalse(dataStoresCache.TryGetDataStoreItem(MenuIds.SharedMenuObjects, CommandIds.Git, out _));
             Assert.IsFalse(dataStoresCache.TryGetDataStoreItem(MenuIds.SharedMenuObjects2, CommandIds.Git, out _));
             Assert.IsFalse(dataStoresCache.TryGetDataStoreItem(MenuIds.NoFileSelectedMenuObjects, CommandIds.Git, out _));
         }
+
 
         [Test]
         public void InvalidCopiedDataStoreItemTest()
@@ -298,25 +296,21 @@ namespace ExtendibleTreeStructure.Tests.ErrorTests
                 true,
                 menuDataStores =>
                 {
-                    var testDataStoresCache = new TestDataStoresCache(menuDataStores,
-                        (dataStoreItemWrapper, parent) =>
-                        {
-                            var dataStoreItem = dataStoreItemWrapper.DataStoreItem;
-
-                            switch (dataStoreItem.Id)
+                    return new TestDataStoresCache(menuDataStores,
+                        new TestMenuDataObjectWrapperFactory(
+                            (dataStoreId, dataStoreItem, parent) =>
                             {
-                                case CommandIds.Projects:
-                                case CommandIds.RecentFiles:
-                                    return (null, new LoggedMessage(MessageType.Custom,
-                                        GetExpectedErrorMessage(dataStoreItem.Id),
-                                        dataStoreItemWrapper.DataStoreId, dataStoreItem, MessageCategory.Error));
-                            }
+                                switch (dataStoreItem.Id)
+                                {
+                                    case CommandIds.Projects:
+                                    case CommandIds.RecentFiles:
+                                        return (null, new LoggedMessage(MessageType.Custom,
+                                            GetExpectedErrorMessage(dataStoreItem.Id),
+                                            dataStoreId, dataStoreItem, MessageCategory.Error));
+                                }
 
-
-                            return (new MenuDataObjectWrapper(dataStoreItemWrapper.DataStoreItem, dataStoreItemWrapper.DataStoreId, parent), null);
-                        });
-
-                    return testDataStoresCache;
+                                return (new MenuDataObjectWrapper(dataStoreId, dataStoreItem, parent), null);
+                            }));
                 });
         }
 
@@ -471,7 +465,6 @@ namespace ExtendibleTreeStructure.Tests.ErrorTests
 
             Assert.IsTrue(dataStoresCache.TryGetDataStoreItem(MenuIds.SharedMenuObjects, CommandIds.Errors, out var dataStoreItemWrapper));
             Assert.AreSame(dataStoreItemWrapper!.DataStoreItem, dataStoreItems1[0]);
-
 
             Assert.IsTrue(dataStoresCache.TryGetDataStoreItem(MenuIds.SharedMenuObjects2, CommandIds.Projects, out var dataStoreItemWrapper2));
             Assert.AreSame(dataStoreItemWrapper2!.DataStoreItem, dataStoreItems2[0]);

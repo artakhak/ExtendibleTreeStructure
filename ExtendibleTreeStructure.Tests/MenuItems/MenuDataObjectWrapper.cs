@@ -23,26 +23,18 @@
 // FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 // OTHER DEALINGS IN THE SOFTWARE.
 
-namespace ExtendibleTreeStructure.Tests.MenuItems
-{
-    public interface IMenuDataObjectWrapper : IDataStoreItemWrapper<INonCopyMenuObject>
-    {
+namespace ExtendibleTreeStructure.Tests.MenuItems;
 
+public class MenuDataObjectWrapper : DataStoreItemWrapper<INonCopyMenuObject, MenuDataObjectWrapper>
+{
+    public MenuDataObjectWrapper(long dataStoreId, INonCopyMenuObject dataStoreItem,
+        MenuDataObjectWrapper? parent = null) : base(dataStoreId, dataStoreItem, parent)
+    {
+        
     }
 
-    public class MenuDataObjectWrapper : DataStoreItemWrapper<INonCopyMenuObject>, IMenuDataObjectWrapper
+    public override string ToString()
     {
-        public MenuDataObjectWrapper(INonCopyMenuObject dataStoreItem, long dataStoreId,
-            IMenuDataObjectWrapper? parent = null) : base(dataStoreItem, dataStoreId, parent)
-        {
-        }
-
-
-        public override string ToString()
-        {
-            //return string.Concat("Wrapper for ", DataStoreItem, ", ", base.ToString());
-            return $"Wrapper for {this.DataStoreItem}, DataStoreId={this.DataStoreId}, {base.ToString()}";
-
-        }
+        return $"Wrapper for {this.DataStoreItem}, DataStoreId={this.DataStoreId}, {base.ToString()}";
     }
 }

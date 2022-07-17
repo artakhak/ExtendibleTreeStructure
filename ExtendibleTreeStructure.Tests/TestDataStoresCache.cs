@@ -33,14 +33,13 @@ namespace ExtendibleTreeStructure.Tests
         public delegate bool IsValidChildDataStoreItemDelegate(INonCopyMenuObject childDataStoreItem, INonCopyMenuObject parentDataStoreItem);
 
         public TestDataStoresCache(IReadOnlyList<IDataStore<IMenuObject>> dataStores) : base(dataStores,
-            (dataStoreItemWrapper, parent) =>
-                (new MenuDataObjectWrapper(dataStoreItemWrapper.DataStoreItem, dataStoreItemWrapper.DataStoreId, parent), null))
+            new TestMenuDataObjectWrapperFactory())
         {
             DataStores = dataStores;
         }
 
         public TestDataStoresCache(IReadOnlyList<IDataStore<IMenuObject>> dataStores,
-            ConvertDataStoreItemWrapperDelegate<INonCopyMenuObject, MenuDataObjectWrapper> convertDataStoreItemWrapper) : base(dataStores, convertDataStoreItemWrapper)
+            IDataStoreItemWrapperFactory<INonCopyMenuObject, MenuDataObjectWrapper> dataStoreItemWrapperFactory) : base(dataStores, dataStoreItemWrapperFactory)
         {
             DataStores = dataStores;
         }

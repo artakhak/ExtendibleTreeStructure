@@ -21,116 +21,120 @@ The following is some vocabulary we use in this document to describe the package
 
 - Data store item: simple structure that has an Id, Priority and might have parent tree item Id (see interfaces
   **ExtendibleTreeStructure.IDataStoreItem**, **ExtendibleTreeStructure.INonCopyDataStoreItem**, **ExtendibleTreeStructure.ICopyDataStoreItem**, and **ExtendibleTreeStructure.ICanHaveParent**).
-- Data store: collection of data store items (see **IDataStor< TDataStoreItem>**)
-- Data store item wrapper: A wrapper object constructed from data store items by **ExtendibleTreeStructure.IDataStoresCacheFactory** in this package, that has a reference to data store item, parent data store item wrapper, and child data store items (see **ExtendibleTreeStructure.IDataStoreItemWrapper< TNonCopyDataStoreItem>**).
+- Data store: collection of data store items (see **ExtendibleTreeStructure.IDataStore&lt;TDataStoreItem&gt;**)
+- Data store item wrapper: A wrapper object of type **ExtendibleTreeStructure.DataStoreItemWrapper&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt** constructed from data store items by **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;**. **DataStoreItemWrapper&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt** has a reference to data store item, parent data store item wrapper, and child data store item wrappers.
+- Data stores cache (see **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;** ) that loads a cache of data store item wrappers (i.e., **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;**) from data stores. Use the default implementation **ExtendibleTreeStructure.DataStoresCache<TDataStoreItem, TNonCopyDataStoreItem, TDataStoreItemWrapper>**) or its subclass. See an implementation **ExtendibleTreeStructure.Tests.TestDataStoresCache** for an example.
+- When data **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;** is loaded, any errors are logged with details of data store items that are sources of errors. Also, the prevents circular references and logs the paths in circular references (see examples below).  
 
-**Notes**
-- The interface **IDataStoresCacheFactory< TDataStoreItem, TNonCopyDataStoreItem, TDataStoreItemWrapper>** shown below takes as an input list of data stores and returns an instance of type **IDataStoresCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>**. 
-**IDataStoresCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>** contains dictionaries of **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>** which in turn contains collection of top level data store item wrappers (i.e., instances of **IDataStoreItemWrapper<TNonCopyDataStoreItem>**) which have been constructed from dat store items in input data stores.
+Below is an example of constructing data stores (see collection menuDataStores in this code), and then using this collection of data stores to construct an instance of **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;** (i.e., **TestDataStoresCache** in this example).
 
-- When data IDataStoresCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>**  is loaded, any errors are logged with details of data store items that are sources of errors. Also, the prevents circular references and logs the paths in circular references (see examples below).  
+- The last line in the example below visualizes the **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;** (i.e., **ExtendibleTreeStructure.Tests.TestDataStoresCache**).
 
-Below is an example of constructing data stores (see collection menuDataStores in this code), and then using this collection of data stores to construct an instance of **IDataStoreItemsCache<TNonCopyDataStoreItem, TDataStoreItemWrapper>**.
-
-- The last line in the example below visualizes the **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>** constructed from data stores using **IDataStoresCacheFactory< TDataStoreItem, TNonCopyDataStoreItem, TDataStoreItemWrapper>**.
-
-## Example of constructing a cache that contains tree structures from data stores.
+## Example of constructing a cache that contains tree structures from data stores. See test method **SimpleDataStoresCacheLoadDemoTest** in class **ExtendibleTreeStructure.Tests.SuccessfulCacheBuildTests.SuccessfulCacheBuildTests** for the complete code.
 
 ```C#
-var menuDataStores = new List<IDataStore<IMenuObject>>();
 
-menuDataStores.Add(
-    new DataStore<IMenuObject>(MenuIds.SharedMenuObjects,
-         new List<IMenuObject>
-         {
-             new MenuItemCollection(MenuIds.SharedToolsCollection),
-             new MenuItemData(CommandIds.Projects, MenuIds.SharedToolsCollection),
-             new MenuItemData(CommandIds.Errors, MenuIds.SharedToolsCollection),
-         }));
+    [Test]
+    public void SimpleDataStoresCacheLoadDemoTest()
+    {
+        var menuDataStores = new List<IDataStore<IMenuObject>>();
 
-menuDataStores.Add(
-    new DataStore<IMenuObject>(MenuIds.NoFileSelectedMenuObjects,
-         new List<IMenuObject>
-         {
-             new MenuBarData(MenuIds.NoFileSelectedDefaultMenuBar),
-             new MenuBarItemData(CommandIds.ViewMenuBarItem, MenuIds.NoFileSelectedDefaultMenuBar),
-             new MenuItemData(CommandIds.ToolsSubmenuItem, CommandIds.ViewMenuBarItem),             
-             
-             // Copy SharedToolsCollection from SharedMenuObjects data store and add the copy to CommandIds.ToolsSubmenuItem as a new child.
-             new CopyMenuObject(MenuIds.SharedMenuObjects, MenuIds.SharedToolsCollection, 
-                 CommandIds.ToolsSubmenuItem),
-             
-             // Add new child CommandIds.Git to child CommandIds.Projects of MenuIds.SharedToolsCollection copied from data store
-             // MenuIds.SharedToolsCollection.
-             new MenuItemData(CommandIds.Git, CommandIds.Projects)
-         }));
+        menuDataStores.Add(new DataStore<IMenuObject>(MenuIds.SharedMenuObjects,
+            new List<IMenuObject>
+            {
+                new MenuItemCollection(MenuIds.SharedToolsCollection),
+                new MenuItemData(CommandIds.Projects, MenuIds.SharedToolsCollection),
+                new MenuItemData(CommandIds.Errors, MenuIds.SharedToolsCollection),
+            }));
 
-menuDataStores.Add(
-    new DataStore<IMenuObject>(MenuIds.TextFileMenuObjects,
-         new List<IMenuObject>
-         {
-             // Copy the menu bar NoFileSelectedDefaultMenuBar from MenuIds.NoFileSelectedMenuObjects data store
-             // and add new children top copied data store item.
-             new CopyMenuObject(MenuIds.NoFileSelectedMenuObjects, MenuIds.NoFileSelectedDefaultMenuBar, null),
+        menuDataStores.Add(new DataStore<IMenuObject>(MenuIds.NoFileSelectedMenuObjects,
+            new List<IMenuObject>
+            {
+                new MenuBarData(MenuIds.NoFileSelectedDefaultMenuBar),
+                new MenuBarItemData(CommandIds.ViewMenuBarItem, MenuIds.NoFileSelectedDefaultMenuBar),
 
-             // Add child CommandIds.RecentLocations to CommandIds.Projects, which is copied from MenuIds.NoFileSelectedMenuObjects
-             // as a child of MenuIds.SharedToolsCollection.
-             new MenuItemData(CommandIds.RecentLocations, CommandIds.Projects)
-             {
-                 // CommandIds.RecentLocations has a priority 0 and will appear before 
-                 // other siblings in Project (default value is null) 
-                 Priority = 0
-             },
+                new MenuItemData(CommandIds.ToolsSubmenuItem, CommandIds.ViewMenuBarItem),
 
-             // Add new menu bar item under menu bar MenuIds.NoFileSelectedDefaultMenuBar copied from data store 
-             // MenuIds.NoFileSelectedMenuObjects.
-             new MenuBarItemData(CommandIds.BuildMenuBarItem, MenuIds.NoFileSelectedDefaultMenuBar),
-             new MenuItemData(CommandIds.RecentFiles, CommandIds.BuildMenuBarItem),
+                // Copy SharedToolsCollection from SharedMenuObjects data store and add the copy to CommandIds.ToolsSubmenuItem as a new child.
+                new CopyMenuObject(MenuIds.SharedMenuObjects, MenuIds.SharedToolsCollection,
+                    CommandIds.ToolsSubmenuItem),
 
-             // This item will result in error message being logged and item not being added
-             // to MenuIds.NoFileSelectedDefaultMenuBar, since menu bars can have only menu bar items as children,
-             // according to logic we provided in second parameter in IDataStoresCacheFactory.LoadDataStoresCache() below
-             new MenuItemData(CommandIds.SaveToCloud, MenuIds.NoFileSelectedDefaultMenuBar)
-         }));
+                // Add new child CommandIds.Git to child CommandIds.Projects of MenuIds.SharedToolsCollection copied from data store
+                // MenuIds.SharedToolsCollection.
+                new MenuItemData(CommandIds.Git, CommandIds.Projects)
+            }));
 
-var dataStoresCacheFactory = new DataStoresCacheFactory<IMenuObject, INonCopyMenuObject, MenuDataObjectWrapper>();
+        menuDataStores.Add(new DataStore<IMenuObject>(MenuIds.TextFileMenuObjects,
+            new List<IMenuObject>
+            {
+                // Copy the menu bar NoFileSelectedDefaultMenuBar from MenuIds.NoFileSelectedMenuObjects data store
+                // and add new children top copied data store item.
+                new CopyMenuObject(MenuIds.NoFileSelectedMenuObjects, MenuIds.NoFileSelectedDefaultMenuBar,
+                    null),
 
-var loadedDataStoresCache = dataStoresCacheFactory.LoadDataStoresCache(menuDataStores,
-         (dataStoreItemWrapper, parent) =>
-         {
-             var dataStoreItem = dataStoreItemWrapper.DataStoreItem;
-             var dataStoreId = dataStoreItemWrapper.DataStoreId;
+                // Add child CommandIds.RecentLocations to CommandIds.Projects, which is copied from MenuIds.NoFileSelectedMenuObjects
+                // as a child of MenuIds.SharedToolsCollection.
+                new MenuItemData(CommandIds.RecentLocations, CommandIds.Projects)
+                {
+                    // CommandIds.RecentLocations has a priority 0 and will appear before 
+                    // other siblings in Project (default value is null) 
+                    Priority = 0
+                },
 
-             if (parent?.DataStoreItem is IMenuBarData)
-             {
-                 if (dataStoreItem is not IMenuBarItemData)
-                     return (null, new LoggedMessage(
-                         MessageType.InvalidChildDataStoreItem,
-                         String.Format("[{0}] cannot be used as a child for [{1}].",
-                             dataStoreItem.GetDisplayValue(dataStoreId, true),
-                             parent.DataStoreItem.GetDisplayValue(dataStoreId, false)),
-                         dataStoreId, dataStoreItem, MessageCategory.Error));
-             }
+                // Add new menu bar item under menu bar MenuIds.NoFileSelectedDefaultMenuBar copied from data store 
+                // MenuIds.NoFileSelectedMenuObjects.
+                new MenuBarItemData(CommandIds.BuildMenuBarItem, MenuIds.NoFileSelectedDefaultMenuBar),
+                new MenuItemData(CommandIds.RecentFiles, CommandIds.BuildMenuBarItem),
 
-             return (new MenuDataObjectWrapper(dataStoreItem, dataStoreItemWrapper.DataStoreId, parent), null);
-         },
-         loggedMessage =>
-         {
-             Console.WriteLine(string.Format("[Data Store Id:{0}, Data Store Item: [{1}], MessageType: {2}, MessageCategory: {3}]{4}{4}\t\tMessage:{5}{4}",
-                 loggedMessage.DataStoreId, loggedMessage.DataStoreItem?.GetDisplayValue(loggedMessage.DataStoreId, false),
-                 loggedMessage.MessageType,
-                 loggedMessage.MessageCategory,
-                 System.Environment.NewLine,
-                 loggedMessage.Message));
-         });
+                // This item will result in error message being logged and item not being added
+                // to MenuIds.NoFileSelectedDefaultMenuBar, since menu bars can have only menu bar items as children,
+                // according to logic we provided in implementation MenuDataObjectWrapperFactory (private class below) of interface 
+                // IDataStoreItemWrapperFactory<INonCopyMenuObject, IMenuDataObjectWrapper>.
+                new MenuItemData(CommandIds.SaveToCloud, MenuIds.NoFileSelectedDefaultMenuBar)
+            }));
 
-var visualizedCacheFilePath = Path.Combine(Path.GetDirectoryName(typeof(TestHelpers).Assembly.Location)!,
-            @"SuccessfulCacheBuildTests\TestFiles\SimpleDataStoresCacheLoadDemo.processed.xml");
+        var loadedDataStoresCache = new TestDataStoresCache(menuDataStores, new MenuDataObjectWrapperFactory());
 
-Console.WriteLine(TestHelpers.VisualizeTestDataStoresCache(loadedDataStoresCache));
+        loadedDataStoresCache.DataStoresCacheLoadMessageEvent += (sender, e) =>
+        {
+            var loggedMessage = e.LoggedMessage;
+            
+            Console.WriteLine(string.Format("[Data Store Id:{0}, Data Store Item: [{1}], MessageType: {2}, MessageCategory: {3}]{4}{4}\t\tMessage:{5}{4}",
+                loggedMessage.DataStoreId, loggedMessage.DataStoreItem?.GetDisplayValue(loggedMessage.DataStoreId, false),
+                loggedMessage.MessageType,
+                loggedMessage.MessageCategory,
+                Environment.NewLine,
+                loggedMessage.Message));
+        };
+
+        loadedDataStoresCache.Initialize();
+          
+        Console.WriteLine(TestHelpers.VisualizeTestDataStoresCache(loadedDataStoresCache));
+    }
+
+    private class MenuDataObjectWrapperFactory : IDataStoreItemWrapperFactory<INonCopyMenuObject, MenuDataObjectWrapper>
+    {
+        public CreateDataStoreItemWrapperResult<INonCopyMenuObject, MenuDataObjectWrapper> Create(long dataStoreId, INonCopyMenuObject dataStoreItem, MenuDataObjectWrapper? parent = null)
+        {
+            if (parent?.DataStoreItem is IMenuBarData)
+            {
+                if (dataStoreItem is not IMenuBarItemData)
+                    return new CreateDataStoreItemWrapperResult<INonCopyMenuObject, MenuDataObjectWrapper>(
+                        null, new LoggedMessage(
+                            MessageType.InvalidChildDataStoreItem,
+                            String.Format("[{0}] cannot be used as a child for [{1}].",
+                                dataStoreItem.GetDisplayValue(dataStoreId, true),
+                                parent.DataStoreItem.GetDisplayValue(dataStoreId, false)),
+                            dataStoreId, dataStoreItem, MessageCategory.Error));
+            }
+
+            return new CreateDataStoreItemWrapperResult<INonCopyMenuObject, MenuDataObjectWrapper>(
+                    new MenuDataObjectWrapper(dataStoreId, dataStoreItem,  parent), null);
+        }
+    }
 ```
 
-## Visualized instance of **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>** (**loadedDataStoresCache** in code above).
+## Visualized instance of **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;** (**loadedDataStoresCache** in code above).
 The xml file below is the visualized text for loadedDataStoresCache variable in C# code above 
 
 ```XML
@@ -183,7 +187,7 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 		Message:[Menu object (Id:CommandIds.SaveToCloud), (ParentId:MenuIds.NoFileSelectedDefaultMenuBar), (DataStoreId:MenuIds.TextFileMenuObjects)] cannot be used as a child 
                for [menu object (Id:MenuIds.NoFileSelectedDefaultMenuBar), (DataStoreId:MenuIds.TextFileMenuObjects)].
 ## Some more examples
-- The examples below show data stores as xml files (the code parses the xml file into collection of **IDataStore< TDataStoreItem>** objects), then an instance of **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>** loaded from the data stores in xml file visualized into another xml file.
+- The examples below show data stores as xml files (the code parses the xml file into collection of **IDataStore&lt;TDataStoreItem&gt;** objects), then an instance of **IDataStoreItemsCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;** loaded from the data stores in xml file visualized into another xml file.
 
 ## Simple example demonstrating copying a data store items from a different data store, and extending the copied data store with new child data store items (pretty similar to example above).
 
@@ -216,7 +220,7 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 	</menuDataStore>
 </menuDataStores>
 ```
-- Loaded **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>**
+- Loaded **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;**
 ```XML
 <?xml version="1.0" encoding="utf-8" ?>
 <menuDataStores>
@@ -289,7 +293,8 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 	</menuDataStore>
 </menuDataStores>
 ```
-- Loaded **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>**
+- Loaded **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;**
+
 ```XML
 <?xml version="1.0" encoding="utf-8" ?>
 <menuDataStores>
@@ -357,8 +362,6 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 		<!--This will be added as the first top level item in SharedMenuObjects.-->
 		<menuItem commandId="Errors" priority="10"/>
 		<menuItem commandId="BuildSolution" priority="20"/>
-
-		
 	</menuDataStore>
 
 	<menuDataStore id="SharedMenuObjects2">
@@ -405,7 +408,7 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 	</menuDataStore>
 </menuDataStores>
 ```
-- Loaded **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>**
+- Loaded **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;**
 ```XML
 <?xml version="1.0" encoding="utf-8" ?>
 <menuDataStores>
@@ -514,7 +517,7 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 </menuDataStores>
 ```
 
-- Loaded **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>**
+- Loaded **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;**
 ```XML
 <?xml version="1.0" encoding="utf-8" ?>
 <menuDataStores>
@@ -587,7 +590,6 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 		<copyMenuObject referencedMenuDataStoreId="SharedMenuObjects2" 
 		                referencedMenuObjectId="ExtendibleTreeStructure.Tests.CommandIds.SaveToCloud"
 						parentId="ExtendibleTreeStructure.Tests.CommandIds.RecentlyChangedFiles" />
-
 	</menuDataStore>
 
 	<menuDataStore id="SharedMenuObjects2">
@@ -608,7 +610,7 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 </menuDataStores>
 ```
 
-- Loaded **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>**
+- Loaded **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;**
 ```XML
 <?xml version="1.0" encoding="utf-8" ?>
 <menuDataStores>
@@ -679,7 +681,7 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 	</menuDataStore>
 </menuDataStores>
 ```
-- Loaded **IDataStoreItemsCache< TNonCopyDataStoreItem, TDataStoreItemWrapper>**
+- Loaded **ExtendibleTreeStructure.IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;**
 ```XML
 <?xml version="1.0" encoding="utf-8" ?>
 <menuDataStores>
@@ -704,7 +706,7 @@ The xml file below is the visualized text for loadedDataStoresCache variable in 
 </menuDataStores>
 ```
 - Logged error messages.
-When circular references are logged, the logged message is of type **ExtendibleTreeStructure.MessageLogging.ICircularReferencesErrorMessage** that extends **ExtendibleTreeStructure.MessageLogging.ILoggedMessage** and has a property **CircularReferencesPath** of type **IReadOnlyList<PathComponentEdge>** with more details on data store items that cause the circular references. Below, is the message that is logged for the data stores above (using the data in **ExtendibleTreeStructure.MessageLogging.ICircularReferencesErrorMessage**).
+When circular references are logged, the logged message is of type **ExtendibleTreeStructure.MessageLogging.ICircularReferencesErrorMessage** that extends **ExtendibleTreeStructure.MessageLogging.ILoggedMessage** and has a property **CircularReferencesPath** of type **IReadOnlyList&lt;PathComponentEdge&gt;** with more details on data store items that cause the circular references. Below, is the message that is logged for the data stores above (using the data in **ExtendibleTreeStructure.MessageLogging.ICircularReferencesErrorMessage**).
 
 ERROR : [Data Store Id:MenuIds.SharedMenuObjects, Data Store Item (Id:CommandIds.ToolsSubmenuItem), MessageType:CircularReferences]
 Message: Menu object (Id:CommandIds.ToolsSubmenuItem), (DataStoreId:MenuIds.SharedMenuObjects) results in the following circular references:

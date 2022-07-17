@@ -96,40 +96,26 @@ namespace ExtendibleTreeStructure.Tests.SuccessfulCacheBuildTests
 
                     // This item will result in error message being logged and item not being added
                     // to MenuIds.NoFileSelectedDefaultMenuBar, since menu bars can have only menu bar items as children,
-                    // according to logic we provided in second parameter in IDataStoresCacheFactory.LoadDataStoresCache() below
+                    // according to logic we provided in implementation MenuDataObjectWrapperFactory (private class below) of interface 
+                    // IDataStoreItemWrapperFactory<INonCopyMenuObject, IMenuDataObjectWrapper>.
                     new MenuItemData(CommandIds.SaveToCloud, MenuIds.NoFileSelectedDefaultMenuBar)
                 }));
 
-            var dataStoresCacheFactory = new DataStoresCacheFactory<IMenuObject, INonCopyMenuObject, MenuDataObjectWrapper>();
+            var loadedDataStoresCache = new TestDataStoresCache(menuDataStores, new MenuDataObjectWrapperFactory());
 
-            var loadedDataStoresCache = dataStoresCacheFactory.LoadDataStoresCache(menuDataStores,
-                (dataStoreItemWrapper, parent) =>
-                {
-                    var dataStoreItem = dataStoreItemWrapper.DataStoreItem;
-                    var dataStoreId = dataStoreItemWrapper.DataStoreId;
+            loadedDataStoresCache.DataStoresCacheLoadMessageEvent += (sender, e) =>
+            {
+                var loggedMessage = e.LoggedMessage;
 
-                    if (parent?.DataStoreItem is IMenuBarData)
-                    {
-                        if (dataStoreItem is not IMenuBarItemData)
-                            return (null, new LoggedMessage(
-                                MessageType.InvalidChildDataStoreItem,
-                                String.Format("[{0}] cannot be used as a child for [{1}].",
-                                    dataStoreItem.GetDisplayValue(dataStoreId, true),
-                                    parent.DataStoreItem.GetDisplayValue(dataStoreId, false)),
-                                dataStoreId, dataStoreItem, MessageCategory.Error));
-                    }
+                Console.WriteLine(string.Format("[Data Store Id:{0}, Data Store Item: [{1}], MessageType: {2}, MessageCategory: {3}]{4}{4}\t\tMessage:{5}{4}",
+                    loggedMessage.DataStoreId, loggedMessage.DataStoreItem?.GetDisplayValue(loggedMessage.DataStoreId, false),
+                    loggedMessage.MessageType,
+                    loggedMessage.MessageCategory,
+                    Environment.NewLine,
+                    loggedMessage.Message));
+            };
 
-                    return (new MenuDataObjectWrapper(dataStoreItem, dataStoreItemWrapper.DataStoreId, parent), null);
-                },
-                loggedMessage =>
-                {
-                    Console.WriteLine(string.Format("[Data Store Id:{0}, Data Store Item: [{1}], MessageType: {2}, MessageCategory: {3}]{4}{4}\t\tMessage:{5}{4}",
-                        loggedMessage.DataStoreId, loggedMessage.DataStoreItem?.GetDisplayValue(loggedMessage.DataStoreId, false),
-                        loggedMessage.MessageType,
-                        loggedMessage.MessageCategory,
-                        System.Environment.NewLine,
-                        loggedMessage.Message));
-                });
+            loadedDataStoresCache.Initialize();
 
             //var visualizedCacheFilePath = Path.Combine(Path.GetDirectoryName(typeof(TestHelpers).Assembly.Location)!,
             //    @"SuccessfulCacheBuildTests\TestFiles\SimpleDataStoresCacheLoadDemo.processed.xml");
@@ -137,6 +123,27 @@ namespace ExtendibleTreeStructure.Tests.SuccessfulCacheBuildTests
             //var visualizeTestDataStoresCache = TestHelpers.SaveDataStoreCache(loadedDataStoresCache, visualizedCacheFilePath);
 
             Console.WriteLine(TestHelpers.VisualizeTestDataStoresCache(loadedDataStoresCache));
+        }
+
+        private class MenuDataObjectWrapperFactory : IDataStoreItemWrapperFactory<INonCopyMenuObject, MenuDataObjectWrapper>
+        {
+            public CreateDataStoreItemWrapperResult<INonCopyMenuObject, MenuDataObjectWrapper> Create(long dataStoreId, INonCopyMenuObject dataStoreItem, MenuDataObjectWrapper? parent = null)
+            {
+                if (parent?.DataStoreItem is IMenuBarData)
+                {
+                    if (dataStoreItem is not IMenuBarItemData)
+                        return new CreateDataStoreItemWrapperResult<INonCopyMenuObject, MenuDataObjectWrapper>(
+                            null, new LoggedMessage(
+                                MessageType.InvalidChildDataStoreItem,
+                                String.Format("[{0}] cannot be used as a child for [{1}].",
+                                    dataStoreItem.GetDisplayValue(dataStoreId, true),
+                                    parent.DataStoreItem.GetDisplayValue(dataStoreId, false)),
+                                dataStoreId, dataStoreItem, MessageCategory.Error));
+                }
+
+                return new CreateDataStoreItemWrapperResult<INonCopyMenuObject, MenuDataObjectWrapper>(
+                    new MenuDataObjectWrapper(dataStoreId, dataStoreItem,  parent), null);
+            }
         }
 
         [Test]
@@ -257,46 +264,44 @@ namespace ExtendibleTreeStructure.Tests.SuccessfulCacheBuildTests
                 @"SuccessfulCacheBuildTests\TestFiles\IgnoreSomeDataStoreItems.xml", expectedDataStoresCache,
                 true, menuDataStores =>
                 {
-                    var testDataStoresCache = new TestDataStoresCache(menuDataStores,
-                        (dataStoreItemWrapper, parent) =>
-                        {
-                            var dataStoreItem = dataStoreItemWrapper.DataStoreItem;
-
-                            if (dataStoreItem.Id == CommandIds.FindFile)
-                                return (null, null);
-
-                            switch (dataStoreItemWrapper.DataStoreId)
+                    return new TestDataStoresCache(menuDataStores,
+                        new TestMenuDataObjectWrapperFactory(
+                            (dataStoreId, dataStoreItem, parent) =>
                             {
-                                case MenuIds.SharedMenuObjects:
-                                    switch (dataStoreItem.Id)
-                                    {
-                                        case CommandIds.Projects:
-                                            return (null, new LoggedMessage(MessageLogging.MessageType.Custom,
-                                                $"Projects is hidden in data store with Id={dataStoreItemWrapper.DataStoreId}.",
-                                                dataStoreItemWrapper.DataStoreId, dataStoreItem, MessageLogging.MessageCategory.Info));
+                                if (dataStoreItem.Id == CommandIds.FindFile)
+                                    return (null, null);
 
-                                        case CommandIds.SaveToCloud:
-                                            return (null, null);
-                                    }
+                                switch (dataStoreId)
+                                {
+                                    case MenuIds.SharedMenuObjects:
+                                        switch (dataStoreItem.Id)
+                                        {
+                                            case CommandIds.Projects:
+                                                return (null, new LoggedMessage(MessageLogging.MessageType.Custom,
+                                                    $"Projects is hidden in data store with Id={dataStoreId}.",
+                                                    dataStoreId, dataStoreItem, MessageLogging.MessageCategory.Info));
 
-                                    break;
+                                            case CommandIds.SaveToCloud:
+                                                return (null, null);
+                                        }
 
-                                case MenuIds.SharedMenuObjects2:
-                                    switch (dataStoreItem.Id)
-                                    {
-                                        case CommandIds.Git:
-                                        case CommandIds.EncodingUtf8:
-                                        case CommandIds.RecentlyChangedFiles:
-                                            return (null, null);
-                                    }
+                                        break;
 
-                                    break;
-                            }
+                                    case MenuIds.SharedMenuObjects2:
+                                        switch (dataStoreItem.Id)
+                                        {
+                                            case CommandIds.Git:
+                                            case CommandIds.EncodingUtf8:
+                                            case CommandIds.RecentlyChangedFiles:
+                                                return (null, null);
+                                        }
 
-                            return (new MenuDataObjectWrapper(dataStoreItemWrapper.DataStoreItem, dataStoreItemWrapper.DataStoreId, parent), null);
-                        });
+                                        break;
+                                }
 
-                    return testDataStoresCache;
+                                return (new MenuDataObjectWrapper(dataStoreId, dataStoreItem, parent), null);
+                            }));
+
                 }, loggedMessages =>
                 {
 

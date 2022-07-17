@@ -11,6 +11,7 @@
 
 	<ItemGroup>
 	  <Compile Include="CommandIds.cs" />
+	  <Compile Include="CreateMenuDataObjectWrapperDelegate.cs" />
 	  <Compile Include="ErrorTests\CircularReferencesErrorTests.cs" />
 	  <Compile Include="ErrorTests\ErrorTests.cs" />
 	  <Compile Include="MenuIds.cs" />
@@ -27,6 +28,7 @@
 	  <Compile Include="SuccessfulCacheBuildTests\SuccessfulCacheBuildTests.cs" />
 	  <Compile Include="TestDataStoresCache.cs" />
 	  <Compile Include="TestHelpers.cs" />
+	  <Compile Include="TestMenuDataObjectWrapperFactory.cs" />
 	  <Compile Include="Validation\ExpectedDataStoresCache.cs" />
 	  <Compile Include="Validation\ExpectedMenuObjectWrapper.cs" />
 	  <Compile Include="Validation\ExpectedMenuDataStoreItemsCache.cs" />

@@ -4,7 +4,7 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<!--<ImplicitUsings>enable</ImplicitUsings>-->
 		<Nullable>enable</Nullable>
-		<Version>1.0.3</Version>
+		<Version>1.2.0</Version>
 		<EnableDefaultItems>false</EnableDefaultItems>
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<Description>ExtendibleTreeStructure is a .NET package that allows easy configuration of tree structures that need to be copied to some other trees with new parents and children.
@@ -25,10 +25,25 @@ Also, the package logs any errors, and prevents circular references that might o
 The git repository https://github.com/artakhak/ExtendibleTreeStructure has more detailed documentation, along with the source code and tests project ExtendibleTreeStructure.Tests with good examples.</Description>
 		<TargetFrameworks></TargetFrameworks>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<AssemblyVersion>1.0.2</AssemblyVersion>
-		<FileVersion>1.0.2</FileVersion>
+		<AssemblyVersion>1.2.0</AssemblyVersion>
+		<FileVersion>1.2.0</FileVersion>
 		<PackageTags>extendible tree structure extendable extensible</PackageTags>
-		<PackageReleaseNotes>Moved to .NET 6.0</PackageReleaseNotes>
+		<PackageReleaseNotes>-Some improvements. Note, some changes will require changes in code that uses this package classes, but the changes should be easy to do. 
+Thought these changes will improve the experience of using the library, when I started using the library in my project.
+
+-Replaced the delegate ExtendibleTreeStructure.ConvertDataStoreItemWrapperDelegate with new factory interface ExtendibleTreeStructure.IDataStoreItemWrapperFactory in constructor of ExtendibleTreeStructure.DataStoresCache.
+   -This also fixes an issue of duplicate items in cache that might result when ConvertDataStoreItemWrapperDelegate returned the same object, instead of creating a new one.
+ 
+-Replaced the type of property Children of ExtendibleTreeStructure.DataStoreItemWrapper with IReadOnlyList&lt;TDataStoreItemWrapper&gt; (used to be List&lt;TDataStoreItemWrapper&gt;). 
+ Had to get rid off base interface ExtendibleTreeStructure.IDataStoreItemWrapper, since I needed an internal method to modify the list in ExtendibleTreeStructure package to accomplish this. 
+ Since ExtendibleTreeStructure.DataStoreItemWrapper is stored in cache returned by IDataStoresCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;.TryGetDataStore(long dataStoreId, out IDataStoreItemsCache&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;? dataStoreItemsCache), thought would be better if the cached instances of ExtendibleTreeStructure.DataStoreItemWrapper are immutable.
+ 
+-Added a new type parameter TDataStoreItemWrapper (that should be  ExtendibleTreeStructure.DataStoreItemWrapper&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;) in DataStoreItemWrapper in  ExtendibleTreeStructure.DataStoreItemWrapper. 
+In other words, DataStoreItemWrapper changed from DataStoreItemWrapper&lt;TNonCopyDataStoreItem&gt; to DataStoreItemWrapper&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt;.
+This way the subclasses of DataStoreItemWrapper&lt;TNonCopyDataStoreItem, TDataStoreItemWrapper&gt; can specify the type of properties Parent and Children to use type TDataStoreItemWrapper, rather than more generic IDataStoreItemWrapper&lt;TNonCopyDataStoreItem&gt;.
+
+An example of how to use ExtendibleTreeStructure can be found in method ExtendibleTreeStructure.Tests.SuccessfulCacheBuildTests.SimpleDataStoresCacheLoadDemoTest(), in test project ExtendibleTreeStructure.Tests in git repository  (https://github.com/artakhak/ExtendibleTreeStructure/blob/main/ExtendibleTreeStructure.Tests/SuccessfulCacheBuildTests/SuccessfulCacheBuildTests.cs)
+</PackageReleaseNotes>
 		<Copyright>Copyright 2022 (c) OROptimizer. All rights reserved.</Copyright>
 		<Company>OROptimizer</Company>
 		<Authors>Artak Hakobyan</Authors>
@@ -50,9 +65,9 @@ The git repository https://github.com/artakhak/ExtendibleTreeStructure has more 
 	  <Compile Include="CircularReferencePrevention\DataStoreItemsRelationship.cs" />
 	  <Compile Include="CircularReferencePrevention\PathComponentEdge.cs" />
 	  <Compile Include="CircularReferencePrevention\PathComponentNode.cs" />
-	  <Compile Include="ConvertDataStoreItemWrapperDelegate.cs" />
+	  <Compile Include="CreateDataStoreItemWrapperResult.cs" />
 	  <Compile Include="DataStoreItemWrapper.cs" />
-	  <Compile Include="IDataStoresCacheFactory.cs" />
+	  <Compile Include="IDataStoreItemWrapperFactory.cs" />
 	  <Compile Include="LoggedMessageEventArgs.cs" />
 	  <Compile Include="MessageLogging\ILoggedMessage.cs" />
 	  <Compile Include="ICanHaveParent.cs" />
@@ -63,7 +78,6 @@ The git repository https://github.com/artakhak/ExtendibleTreeStructure has more 
 	  <Compile Include="IDataStoreItemCanBeCopiedWithNullParent.cs" />
 	  <Compile Include="IDataStoreItemsCache.cs" />
 	  <Compile Include="IDataStoresCache.cs" />
-	  <Compile Include="IDataStoreItemWrapper.cs" />
 	  <Compile Include="INonCopyDataStoreItem.cs" />
 	  <Compile Include="MessageLogging\ICircularReferencesErrorMessage.cs" />
 	  <Compile Include="MessageLogging\MessageCategory.cs" />

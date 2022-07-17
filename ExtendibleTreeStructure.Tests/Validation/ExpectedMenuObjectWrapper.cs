@@ -135,7 +135,7 @@ namespace ExtendibleTreeStructure.Tests.Validation
             return currentParent;
         }
 
-        public void AssertEqualTo(IDataStoreItemWrapper<INonCopyMenuObject> dataStoreItemWrapper, bool isParentNulledOut = false)
+        public void AssertEqualTo(MenuDataObjectWrapper dataStoreItemWrapper, bool isParentNulledOut = false)
         {
             Assert.AreEqual(NonCopyMenuObject.GetType(), dataStoreItemWrapper.DataStoreItem.GetType());
 

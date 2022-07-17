@@ -27,12 +27,12 @@ namespace ExtendibleTreeStructure
 {
     /// <summary>
     /// An interface that should be implemented by any implementation of <see cref="IDataStoreItem"/>.
-    /// Supports cloning of an instance of <see cref="TNonCopyDataStoreItem"/> with a null parent and new Id.
+    /// Supports cloning of an instance of <typeparamref name="TNonCopyDataStoreItem"/> with a null parent and new Id.
     /// </summary>
     public interface IDataStoreItemCanBeCopiedWithNullParent<TNonCopyDataStoreItem> where TNonCopyDataStoreItem : class, INonCopyDataStoreItem
     {
         /// <summary>
-        /// Clones an instance of <see cref="TNonCopyDataStoreItem"/> with a null parent and new Id specified in parameter <paramref name="id"/>.
+        /// Clones an instance of <typeparamref name="TNonCopyDataStoreItem"/> with a null parent and new Id specified in parameter <paramref name="id"/>.
         /// </summary>
         /// <param name="id">New Id.</param>
         TNonCopyDataStoreItem CloneWithNullParent(long id);

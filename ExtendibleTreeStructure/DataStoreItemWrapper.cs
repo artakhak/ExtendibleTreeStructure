@@ -25,39 +25,59 @@
 
 using System.Collections.Generic;
 
-namespace ExtendibleTreeStructure
+namespace ExtendibleTreeStructure;
+
+/// <summary>
+/// A wrapper for <see cref="INonCopyDataStoreItem"/>. 
+/// </summary>
+/// <typeparam name="TNonCopyDataStoreItem">Generic type parameter for a type of <see cref="INonCopyDataStoreItem"/>.</typeparam>
+/// <typeparam name="TDataStoreItemWrapper">Generic type parameter used for type of <see cref="Parent"/> and items in <see cref="Children"/>.</typeparam>
+public class DataStoreItemWrapper<TNonCopyDataStoreItem, TDataStoreItemWrapper> 
+    where TNonCopyDataStoreItem : class, INonCopyDataStoreItem
+    where TDataStoreItemWrapper : DataStoreItemWrapper<TNonCopyDataStoreItem, TDataStoreItemWrapper>
 {
+    private readonly List<TDataStoreItemWrapper> _children = new();
 
     /// <summary>
-    /// A wrapper for <see cref="INonCopyDataStoreItem"/>. 
+    /// Constructor.
     /// </summary>
-    public class DataStoreItemWrapper<TNonCopyDataStoreItem> : IDataStoreItemWrapper<TNonCopyDataStoreItem>
-        where TNonCopyDataStoreItem : class, INonCopyDataStoreItem
+    /// <param name="dataStoreId">Data store Id of the data store that owns the data store item.</param>
+    /// <param name="dataStoreItem">Wrapped data store item.</param>
+    /// <param name="parent">Parent data store item wrapper.</param>
+    public DataStoreItemWrapper(long dataStoreId, TNonCopyDataStoreItem dataStoreItem, TDataStoreItemWrapper? parent = null)
     {
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="dataStoreItem">Wrapped data store item.</param>
-        /// <param name="dataStoreId">Data store Id of the data store that owns the data store item.</param>
-        /// <param name="parent">Parent data store item wrapper.</param>
-        public DataStoreItemWrapper(TNonCopyDataStoreItem dataStoreItem, long dataStoreId, IDataStoreItemWrapper<TNonCopyDataStoreItem>? parent = null)
-        {
-            DataStoreItem = dataStoreItem;
-            Parent = parent;
-            DataStoreId = dataStoreId;
-        }
+        DataStoreId = dataStoreId;
+        DataStoreItem = dataStoreItem;
+        Parent = parent;
+    }
 
+    /// <summary>
+    /// Data store item.
+    /// </summary>
+    public TNonCopyDataStoreItem DataStoreItem { get; }
 
-        /// <inheritdoc />
-        public TNonCopyDataStoreItem DataStoreItem { get; }
+    /// <summary>
+    /// Parent ata store item wrapper.
+    /// </summary>
+    public TDataStoreItemWrapper? Parent { get; }
 
-        /// <inheritdoc />
-        public IDataStoreItemWrapper<TNonCopyDataStoreItem>? Parent { get; }
+    /// <summary>
+    /// Data store Id of the data store that owns the data store item.
+    /// </summary>
+    public long DataStoreId { get; }
 
-        /// <inheritdoc />
-        public long DataStoreId { get; }
+    /// <summary>
+    /// Children of data store item wrapper. Children are sorted based on the values of <see cref="IDataStoreItem.Priority"/>.
+    /// </summary>
+    public IReadOnlyList<TDataStoreItemWrapper> Children => _children;
 
-        /// <inheritdoc />
-        public List<IDataStoreItemWrapper<TNonCopyDataStoreItem>> Children { get; } = new();
+    /// <summary>
+    /// Initializes the value of <see cref="Children"/>. 
+    /// </summary>
+    /// <param name="children">Child data store item wrappers</param>
+   
+    internal void SetChildren(IReadOnlyList<TDataStoreItemWrapper> children)
+    {
+        _children.AddRange(children);
     }
 }

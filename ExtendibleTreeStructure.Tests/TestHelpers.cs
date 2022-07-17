@@ -416,7 +416,7 @@ namespace ExtendibleTreeStructure.Tests
             else
                 testDataStoresCache = new TestDataStoresCache(menuDataStores);
 
-            List<ILoggedMessage> loggedMessages = new List<ILoggedMessage>();
+            var loggedMessages = new List<ILoggedMessage>();
 
             testDataStoresCache.DataStoresCacheLoadMessageEvent += (_, e) =>
             {
@@ -549,7 +549,7 @@ namespace ExtendibleTreeStructure.Tests
             return fieldData;
         }
 
-        private static void VisualizeDataStoreItemWrapper(IDataStoreItemWrapper<INonCopyMenuObject> dataStoreItemWrapper, StringBuilder generatedXml, int level)
+        private static void VisualizeDataStoreItemWrapper(MenuDataObjectWrapper dataStoreItemWrapper, StringBuilder generatedXml, int level)
         {
             var indent = new String('\t', level);
 
@@ -597,7 +597,7 @@ namespace ExtendibleTreeStructure.Tests
 
             if (dataStoreItemWrapper.DataStoreItem is ICanHaveParent canHaveParent && canHaveParent.ParentId != null)
             {
-                var parentIdMemberData = ConstantValueToConstantMemberData[canHaveParent.ParentId.Value];
+                var parentIdMemberData = ConstantValueToConstantMemberData[canHaveParent.ParentId!.Value];
                 generatedXml.Append($" {parentIdAttributeName}=\"{parentIdMemberData.constantsType.FullName}.{parentIdMemberData.memberName}\"");
             }
 

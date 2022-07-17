@@ -30,9 +30,9 @@ namespace ExtendibleTreeStructure.Tests.MenuItems
         bool IsParentNulledOut { get; set; }
     }
 
-    public class MenuObject : IMenuObject
+    public abstract class MenuObject : IMenuObject
     {
-        public MenuObject(long id, long? parentId = null)
+        protected MenuObject(long id, long? parentId = null)
         {
             Id = id;
             ParentId = parentId;

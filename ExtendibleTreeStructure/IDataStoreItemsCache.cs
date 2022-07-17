@@ -33,7 +33,7 @@ namespace ExtendibleTreeStructure
     /// </summary>
     public interface IDataStoreItemsCache<TNonCopyDataStoreItem, TDataStoreItemWrapper>
         where TNonCopyDataStoreItem : class, INonCopyDataStoreItem
-        where TDataStoreItemWrapper : class, IDataStoreItemWrapper<TNonCopyDataStoreItem>
+        where TDataStoreItemWrapper : DataStoreItemWrapper<TNonCopyDataStoreItem, TDataStoreItemWrapper>
     {
         /// <summary>
         /// Data storeId.
@@ -41,7 +41,7 @@ namespace ExtendibleTreeStructure
         long DataStoreId { get; }
 
         /// <summary>
-        /// Tries to retrieve an instance of <see cref="TDataStoreItemWrapper"/> with data store item Id=<paramref name="dataStoreItemId"/>.
+        /// Tries to retrieve an instance of <typeparamref name="TDataStoreItemWrapper"/> with data store item Id=<paramref name="dataStoreItemId"/>.
         /// </summary>
         /// <param name="dataStoreItemId">Data store item Id.</param>
         /// <param name="dataStoreItemWrapper">Retrieved instance of <typeparamref name="TDataStoreItemWrapper"/>.</param>
